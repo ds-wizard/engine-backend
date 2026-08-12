@@ -85,14 +85,16 @@ getProjectsForCurrentUserPageDto
   -> Maybe Bool
   -> Maybe [String]
   -> Maybe String
-  -> Maybe [String]
+  -> Maybe [U.UUID]
+  -> Maybe String
+  -> Maybe [U.UUID]
   -> Maybe String
   -> Maybe [Coordinate]
   -> Maybe String
   -> Pageable
   -> [Sort]
   -> AppContextM (Page ProjectDTO)
-getProjectsForCurrentUserPageDto mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mKnowledgeModelPackageCoordinates mKnowledgeModelPackageCoordinatesOp pageable sort = do
+getProjectsForCurrentUserPageDto mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mUserGroupUuids mUserGroupUuidsOp mKnowledgeModelPackageCoordinates mKnowledgeModelPackageCoordinatesOp pageable sort = do
   currentUser <- getCurrentUser
   projectPage <-
     findProjectsForCurrentUserPage
@@ -103,6 +105,8 @@ getProjectsForCurrentUserPageDto mQuery mIsTemplate mIsMigrating mProjectTags mP
       mProjectTagsOp
       mUserUuids
       mUserUuidsOp
+      mUserGroupUuids
+      mUserGroupUuidsOp
       mKnowledgeModelPackageCoordinates
       mKnowledgeModelPackageCoordinatesOp
       pageable

@@ -1,8 +1,10 @@
 module Wizard.Api.Handler.Project.List_GET where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Common.Api.Handler.Common
+import Shared.Common.Api.Resource.Common.FromHttpApiData ()
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Context.TransactionState
@@ -24,8 +26,10 @@ type List_GET =
     :> QueryParam "isMigrating" Bool
     :> QueryParam "projectTags" String
     :> QueryParam "projectTagsOp" String
-    :> QueryParam "userUuids" String
+    :> QueryParam "userUuids" [U.UUID]
     :> QueryParam "userUuidsOp" String
+    :> QueryParam "userGroupUuids" [U.UUID]
+    :> QueryParam "userGroupUuidsOp" String
     :> QueryParam "knowledgeModelPackageIds" [Coordinate]
     :> QueryParam "knowledgeModelPackageIdsOp" String
     :> QueryParam "page" Int
@@ -41,7 +45,9 @@ list_GET
   -> Maybe Bool
   -> Maybe String
   -> Maybe String
+  -> Maybe [U.UUID]
   -> Maybe String
+  -> Maybe [U.UUID]
   -> Maybe String
   -> Maybe [Coordinate]
   -> Maybe String
@@ -49,11 +55,10 @@ list_GET
   -> Maybe Int
   -> Maybe String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] (Page ProjectDTO))
-list_GET mTokenHeader mServerUrl mQuery mIsTemplate mIsMigrating mProjectTagsL mProjectTagsOp mUserUuidsL mUserUuidsOp mKnowledgeModelPackageCoordinates mKnowledgeModelPackageCoordinatesOp mPage mSize mSort =
+list_GET mTokenHeader mServerUrl mQuery mIsTemplate mIsMigrating mProjectTagsL mProjectTagsOp mUserUuids mUserUuidsOp mUserGroupUuids mUserGroupUuidsOp mKnowledgeModelPackageCoordinates mKnowledgeModelPackageCoordinatesOp mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $
       addTraceUuidHeader =<< do
-        let mUserUuids = fmap (splitOn ",") mUserUuidsL
         let mProjectTags = fmap (splitOn ",") mProjectTagsL
         getProjectsForCurrentUserPageDto
           mQuery
@@ -63,6 +68,8 @@ list_GET mTokenHeader mServerUrl mQuery mIsTemplate mIsMigrating mProjectTagsL m
           mProjectTagsOp
           mUserUuids
           mUserUuidsOp
+          mUserGroupUuids
+          mUserGroupUuidsOp
           mKnowledgeModelPackageCoordinates
           mKnowledgeModelPackageCoordinatesOp
           (Pageable mPage mSize)
