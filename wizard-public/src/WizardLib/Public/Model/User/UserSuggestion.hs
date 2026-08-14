@@ -10,6 +10,7 @@ data UserSuggestion = UserSuggestion
   , lastName :: String
   , gravatarHash :: String
   , imageUrl :: Maybe String
+  , affiliation :: Maybe String
   }
   deriving (Show, Eq, Generic)
 

@@ -67,7 +67,8 @@ findProjectFilesPage mQuery mProjectUuid pageable sort = do
               \       created_by.first_name, \
               \       created_by.last_name, \
               \       created_by.email, \
-              \       created_by.image_url \
+              \       created_by.image_url, \
+              \       created_by.affiliation \
               \FROM project_file file \
               \LEFT JOIN user_entity created_by ON created_by.uuid = file.created_by AND created_by.tenant_uuid = file.tenant_uuid \
               \LEFT JOIN project ON project.uuid = file.project_uuid AND project.tenant_uuid = file.tenant_uuid \

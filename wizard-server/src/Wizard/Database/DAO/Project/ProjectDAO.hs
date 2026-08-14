@@ -247,7 +247,7 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTagsOp mU
               \        pkg.uuid, \
               \        pkg.name, \
               \        pkg.version, \
-              \       (SELECT array_agg(CONCAT(project_perm_user.user_uuid, '::', project_perm_user.perms, '::', u.uuid, '::', u.first_name, '::', u.last_name, '::', u.email, '::', u.image_url)) \
+              \       (SELECT array_agg(CONCAT(project_perm_user.user_uuid, '::', project_perm_user.perms, '::', u.uuid, '::', u.first_name, '::', u.last_name, '::', u.email, '::', u.image_url, '::', u.affiliation)) \
               \        FROM project_perm_user \
               \        JOIN user_entity u on u.uuid = project_perm_user.user_uuid \
               \        WHERE project_uuid = filtered_project.uuid \
@@ -596,7 +596,7 @@ findProjectDetailSettings uuid = do
 projectDetailPermSql :: String
 projectDetailPermSql =
   "(SELECT array_agg(CONCAT(project_perm_user.user_uuid, '::', project_perm_user.perms, '::', u.uuid, '::', u.first_name, \
-  \                         '::', u.last_name, '::', u.email, '::', u.image_url)) \
+  \                         '::', u.last_name, '::', u.email, '::', u.image_url, '::', u.affiliation)) \
   \ FROM project_perm_user \
   \          JOIN user_entity u on u.uuid = project_perm_user.user_uuid \
   \ WHERE project_uuid = project.uuid \

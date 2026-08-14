@@ -15,6 +15,7 @@ data OnlineUserInfo
       , lastName :: String
       , gravatarHash :: String
       , imageUrl :: Maybe String
+      , affiliation :: Maybe String
       , colorNumber :: Int
       , role :: RoleSimple
       , groupUuids :: [U.UUID]

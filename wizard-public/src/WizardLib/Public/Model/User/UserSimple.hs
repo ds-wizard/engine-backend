@@ -9,5 +9,6 @@ data UserSimple = UserSimple
   , lastName :: String
   , email :: String
   , imageUrl :: Maybe String
+  , affiliation :: Maybe String
   }
   deriving (Generic, Eq, Show)

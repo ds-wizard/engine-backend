@@ -21,9 +21,10 @@ instance FromRow ProjectFileList where
     createdByLastName <- field
     createdByEmail <- field
     createdByImageUrl <- field
+    createdByAffiliation <- field
     let createdBy =
-          case (createdByUuid, createdByFirstName, createdByLastName, createdByEmail, createdByImageUrl) of
-            (Just uuid, Just firstName, Just lastName, Just email, imageUrl) ->
+          case (createdByUuid, createdByFirstName, createdByLastName, createdByEmail, createdByImageUrl, createdByAffiliation) of
+            (Just uuid, Just firstName, Just lastName, Just email, imageUrl, affiliation) ->
               let gravatarHash = createGravatarHash email
                in Just UserSuggestion {..}
             _ -> Nothing

@@ -12,5 +12,6 @@ toWithMembershipDTO user =
     , lastName = user.lastName
     , gravatarHash = createGravatarHash user.email
     , imageUrl = user.imageUrl
+    , affiliation = user.affiliation
     , membershipType = user.membershipType
     }

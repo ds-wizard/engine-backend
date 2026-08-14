@@ -66,7 +66,8 @@ findProjectEventsPage projectUuid pageable sort = do
               \       user_entity.first_name           AS created_by_first_name, \
               \       user_entity.last_name            AS created_by_last_name, \
               \       gravatar_hash(user_entity.email) AS created_by_gravatar_hash, \
-              \       user_entity.image_url            AS created_by_email \
+              \       user_entity.image_url            AS created_by_image_url, \
+              \       user_entity.affiliation          AS created_by_affiliation \
               \FROM project_event \
               \     LEFT JOIN user_entity ON user_entity.uuid = project_event.created_by \
               \WHERE project_event.tenant_uuid = ? \
@@ -121,7 +122,8 @@ findProjectEventListsByProjectUuid projectUuid = do
           \       user_entity.first_name           AS created_by_first_name, \
           \       user_entity.last_name            AS created_by_last_name, \
           \       gravatar_hash(user_entity.email) AS created_by_gravatar_hash, \
-          \       user_entity.image_url            AS created_by_email \
+          \       user_entity.image_url            AS created_by_image_url, \
+          \       user_entity.affiliation          AS created_by_affiliation \
           \FROM project_event \
           \     LEFT JOIN user_entity ON user_entity.uuid = project_event.created_by \
           \WHERE project_event.tenant_uuid = ? \

@@ -53,7 +53,8 @@ findPersistentCommandsPage states pageable sort = do
               \                                                            user_entity.first_name, '::', \
               \                                                            user_entity.last_name, '::', \
               \                                                            user_entity.email, '::', \
-              \                                                            user_entity.image_url) \
+              \                                                            user_entity.image_url, '::', \
+              \                                                            user_entity.affiliation) \
               \       END AS created_by \
               \FROM persistent_command \
               \         LEFT JOIN tenant ON tenant.uuid = persistent_command.tenant_uuid \

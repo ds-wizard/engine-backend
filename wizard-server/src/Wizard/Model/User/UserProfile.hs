@@ -16,6 +16,7 @@ data UserProfile = UserProfile
   , firstName :: String
   , lastName :: String
   , email :: String
+  , affiliation :: Maybe String
   , imageUrl :: Maybe String
   , role :: RoleSimple
   , lastSeenNewsId :: Maybe String

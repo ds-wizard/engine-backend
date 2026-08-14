@@ -104,7 +104,8 @@ findAssignedProjectCommentThreadsPage mQuery mProjectUuid mResolved pageable sor
             \       u.first_name AS created_by_first_name, \
             \       u.last_name AS created_by_last_name, \
             \       u.email AS created_by_email, \
-            \       u.image_url AS created_by_image_url \
+            \       u.image_url AS created_by_image_url, \
+            \       u.affiliation AS created_by_affiliation \
             \FROM project_comment_thread thread \
             \JOIN project ON project.uuid = thread.project_uuid AND project.tenant_uuid = thread.tenant_uuid \
             \LEFT JOIN user_entity u ON u.uuid = thread.created_by AND u.tenant_uuid = thread.tenant_uuid \
@@ -189,11 +190,13 @@ findProjectCommentThreadsForProject projectUuid mPath mResolved editor = do
             \       assigned_to_user.last_name, \
             \       assigned_to_user.email, \
             \       assigned_to_user.image_url, \
+            \       assigned_to_user.affiliation, \
             \       created_by_user.uuid, \
             \       created_by_user.first_name, \
             \       created_by_user.last_name, \
             \       created_by_user.email, \
             \       created_by_user.image_url, \
+            \       created_by_user.affiliation, \
             \       (SELECT array_agg(concat(comment.uuid, '<:::::>', \
             \                                comment.text, '<:::::>', \
             \                                comment.created_at, '<:::::>', \
@@ -202,7 +205,8 @@ findProjectCommentThreadsForProject projectUuid mPath mResolved editor = do
             \                                user_entity.first_name, '<:::::>', \
             \                                user_entity.last_name, '<:::::>', \
             \                                user_entity.email, '<:::::>', \
-            \                                user_entity.image_url \
+            \                                user_entity.image_url, '<:::::>', \
+            \                                user_entity.affiliation \
             \                        )) AS comments \
             \         FROM project_comment comment \
             \         LEFT JOIN user_entity ON user_entity.uuid = comment.created_by \
