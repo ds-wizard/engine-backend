@@ -16,6 +16,7 @@ userAlbertWithMembership =
     , lastName = "Einstein"
     , gravatarHash = ".."
     , imageUrl = Nothing
+    , affiliation = Nothing
     , membershipType = OwnerUserGroupMembershipType
     }
 
@@ -27,6 +28,7 @@ userAlbertSuggestion =
     , lastName = "Einstein"
     , gravatarHash = ".."
     , imageUrl = Nothing
+    , affiliation = Nothing
     }
 
 userLocaleEmpty :: UserLocaleDTO

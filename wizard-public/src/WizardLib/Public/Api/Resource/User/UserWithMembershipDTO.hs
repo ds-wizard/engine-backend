@@ -11,6 +11,7 @@ data UserWithMembershipDTO = UserWithMembershipDTO
   , lastName :: String
   , gravatarHash :: String
   , imageUrl :: Maybe String
+  , affiliation :: Maybe String
   , membershipType :: UserGroupMembershipType
   }
   deriving (Show, Eq, Generic)

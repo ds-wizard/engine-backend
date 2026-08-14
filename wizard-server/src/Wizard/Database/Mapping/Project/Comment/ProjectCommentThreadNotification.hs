@@ -30,6 +30,7 @@ instance FromRow ProjectCommentThreadNotification where
             , lastName = assignedToLastName
             , imageUrl = Nothing
             , email = assignedToEmail
+            , affiliation = Nothing
             }
     mAssignedByUuid <- fieldWith (optionalField fromField)
     mAssignedByFirstName <- fieldWith (optionalField fromField)
@@ -45,6 +46,7 @@ instance FromRow ProjectCommentThreadNotification where
                   , lastName = assignedByLastName
                   , imageUrl = Nothing
                   , email = assignedByEmail
+                  , affiliation = Nothing
                   }
             _ -> Nothing
     text <- field

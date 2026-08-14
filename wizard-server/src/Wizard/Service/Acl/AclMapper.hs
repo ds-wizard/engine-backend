@@ -13,6 +13,7 @@ toUserMemberDTO user =
     , lastName = user.lastName
     , gravatarHash = createGravatarHash user.email
     , imageUrl = user.imageUrl
+    , affiliation = user.affiliation
     }
 
 toUserGroupMemberDTO :: UserGroup -> MemberDTO

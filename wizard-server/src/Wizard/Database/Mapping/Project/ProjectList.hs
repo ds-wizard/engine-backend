@@ -64,6 +64,10 @@ instance FromRow ProjectList where
                         case parts !! 6 of
                           "" -> Nothing
                           imageUrl -> Just imageUrl
+                    , affiliation =
+                        case parts !! 7 of
+                          "" -> Nothing
+                          affiliation -> Just affiliation
                     }
               }
       parseGroupPermission :: U.UUID -> String -> ProjectPermDTO

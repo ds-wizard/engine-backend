@@ -11,6 +11,7 @@ data UserWithMembership = UserWithMembership
   , lastName :: String
   , email :: String
   , imageUrl :: Maybe String
+  , affiliation :: Maybe String
   , membershipType :: UserGroupMembershipType
   }
   deriving (Generic, Eq, Show)

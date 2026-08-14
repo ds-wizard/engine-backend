@@ -49,7 +49,8 @@ findSubmissionsByDocumentUuid documentUuid = do
           \       user_entity.first_name, \
           \       user_entity.last_name, \
           \       gravatar_hash(user_entity.email), \
-          \       user_entity.image_url \
+          \       user_entity.image_url, \
+          \       user_entity.affiliation \
           \FROM submission \
           \LEFT JOIN config_submission_service service ON service.tenant_uuid = submission.tenant_uuid AND service.id = submission.service_id \
           \LEFT JOIN user_entity ON user_entity.tenant_uuid = submission.tenant_uuid AND user_entity.uuid = submission.created_by \

@@ -12,6 +12,7 @@ instance FromRow UserSimple where
     lastName <- field
     email <- field
     imageUrl <- field
+    affiliation <- field
     return $ UserSimple {..}
 
 fieldUserSimple :: RowParser UserSimple
@@ -21,6 +22,7 @@ fieldUserSimple = do
   lastName <- field
   email <- field
   imageUrl <- field
+  affiliation <- field
   return UserSimple {..}
 
 fieldUserSimple' :: RowParser (Maybe UserSimple)
@@ -30,6 +32,7 @@ fieldUserSimple' = do
   mCreatedByLastName <- field
   mCreatedByEmail <- field
   mCreatedByImageUrl <- field
-  case (mCreatedByUuid, mCreatedByFirstName, mCreatedByLastName, mCreatedByEmail, mCreatedByImageUrl) of
-    (Just uuid, Just firstName, Just lastName, Just email, imageUrl) -> return $ Just UserSimple {..}
+  mCreatedByAffiliation <- field
+  case (mCreatedByUuid, mCreatedByFirstName, mCreatedByLastName, mCreatedByEmail, mCreatedByImageUrl, mCreatedByAffiliation) of
+    (Just uuid, Just firstName, Just lastName, Just email, imageUrl, affiliation) -> return $ Just UserSimple {..}
     _ -> return Nothing

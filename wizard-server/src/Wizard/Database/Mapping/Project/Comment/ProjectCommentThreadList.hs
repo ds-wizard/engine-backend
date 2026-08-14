@@ -26,6 +26,7 @@ instance FromRow ProjectCommentThreadList where
     mAssignedToLastName <- fieldWith (optionalField fromField)
     mAssignedToEmail <- fieldWith (optionalField fromField)
     mAssignedToImageUrl <- fieldWith (optionalField fromField)
+    mAssignedToAffiliation <- fieldWith (optionalField fromField)
     let assignedTo =
           case (mAssignedToUuid, mAssignedToFirstName, mAssignedToLastName, mAssignedToEmail) of
             (Just assignedToUuid, Just assignedToFirstName, Just assignedToLastName, Just assignedToEmail) ->
@@ -36,6 +37,7 @@ instance FromRow ProjectCommentThreadList where
                   , lastName = assignedToLastName
                   , imageUrl = mAssignedToImageUrl
                   , gravatarHash = createGravatarHash assignedToEmail
+                  , affiliation = mAssignedToAffiliation
                   }
             _ -> Nothing
     mCreatedByUuid <- fieldWith (optionalField fromField)
@@ -43,6 +45,7 @@ instance FromRow ProjectCommentThreadList where
     mCreatedByLastName <- fieldWith (optionalField fromField)
     mCreatedByEmail <- fieldWith (optionalField fromField)
     mCreatedByImageUrl <- fieldWith (optionalField fromField)
+    mCreatedByAffiliation <- fieldWith (optionalField fromField)
     let createdBy =
           case (mCreatedByUuid, mCreatedByFirstName, mCreatedByLastName, mCreatedByEmail) of
             (Just createdByUuid, Just createdByFirstName, Just createdByLastName, Just createdByEmail) ->
@@ -53,6 +56,7 @@ instance FromRow ProjectCommentThreadList where
                   , lastName = createdByLastName
                   , imageUrl = mCreatedByImageUrl
                   , gravatarHash = createGravatarHash createdByEmail
+                  , affiliation = mCreatedByAffiliation
                   }
             _ -> Nothing
     commentsArray <- fromPGArray <$> field
@@ -81,5 +85,9 @@ parseComment commentS =
                           "" -> Nothing
                           value -> Just value
                     , gravatarHash = createGravatarHash $ parts !! 7
+                    , affiliation =
+                        case parts !! 9 of
+                          "" -> Nothing
+                          value -> Just value
                     }
         }

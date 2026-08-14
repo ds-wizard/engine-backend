@@ -49,7 +49,8 @@ findProjectVersionListByProjectUuidAndCreatedAt projectUuid mCreatedAt = do
             \       u.first_name, \
             \       u.last_name, \
             \       u.email, \
-            \       u.image_url \
+            \       u.image_url, \
+            \       u.affiliation \
             \FROM project_version v \
             \JOIN user_entity u ON u.uuid = v.created_by AND u.tenant_uuid = v.tenant_uuid ${createdAtCondition} \
             \WHERE v.tenant_uuid = ? AND v.project_uuid = ? \

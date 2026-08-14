@@ -46,6 +46,7 @@ toUserProfile user userGroupUuids pluginSettings =
     , firstName = user.firstName
     , lastName = user.lastName
     , email = user.email
+    , affiliation = user.affiliation
     , imageUrl = user.imageUrl
     , role = user.role
     , lastSeenNewsId = user.lastSeenNewsId
@@ -63,6 +64,7 @@ toSimple user =
     , lastName = user.lastName
     , email = user.email
     , imageUrl = user.imageUrl
+    , affiliation = user.affiliation
     }
 
 toWithMembership :: User -> UserGroupMembershipType -> UserWithMembership
@@ -73,6 +75,7 @@ toWithMembership user membershipType =
     , lastName = user.lastName
     , email = user.email
     , imageUrl = user.imageUrl
+    , affiliation = user.affiliation
     , membershipType = membershipType
     }
 
@@ -84,6 +87,7 @@ toSuggestion user =
     , lastName = user.lastName
     , gravatarHash = createGravatarHash user.email
     , imageUrl = user.imageUrl
+    , affiliation = user.affiliation
     }
 
 toSuggestion' :: UserDTO -> UserSuggestion
@@ -94,6 +98,7 @@ toSuggestion' user =
     , lastName = user.lastName
     , gravatarHash = createGravatarHash user.email
     , imageUrl = user.imageUrl
+    , affiliation = user.affiliation
     }
 
 toOnlineUserInfo :: Maybe UserDTO -> Int -> Int -> [U.UUID] -> OnlineUserInfo
@@ -110,6 +115,7 @@ toLoggedOnlineUserInfo user colorNumber groupUuids =
     , lastName = user.lastName
     , gravatarHash = createGravatarHash user.email
     , imageUrl = user.imageUrl
+    , affiliation = user.affiliation
     , colorNumber = colorNumber
     , role = user.role
     , groupUuids = groupUuids
