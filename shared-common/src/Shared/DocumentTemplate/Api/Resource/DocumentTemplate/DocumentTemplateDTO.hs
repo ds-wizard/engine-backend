@@ -10,6 +10,8 @@ import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimp
 data DocumentTemplateDTO = DocumentTemplateDTO
   { uuid :: U.UUID
   , name :: String
+  , organizationId :: String
+  , templateId :: String
   , version :: String
   , phase :: DocumentTemplatePhase
   , description :: String

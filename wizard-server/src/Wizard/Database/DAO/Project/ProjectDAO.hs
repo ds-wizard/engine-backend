@@ -547,6 +547,8 @@ findProjectDetailSettings uuid = do
             \       pkg.created_at                 as knowledge_model_package_created_at, \
             \       dt.uuid                        as document_template_uuid, \
             \       dt.name                        as document_template_name, \
+            \       dt.organization_id             as document_template_organization_id, \
+            \       dt.template_id                 as document_template_template_id, \
             \       dt.version                     as document_template_version, \
             \       dt.phase                       as document_template_phase, \
             \       dt.description                 as document_template_description, \
