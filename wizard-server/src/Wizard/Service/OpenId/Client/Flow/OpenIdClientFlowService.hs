@@ -22,6 +22,7 @@ import Shared.OpenId.Api.Resource.OpenId.Client.Flow.OpenIdClientAuthenticationU
 import Shared.OpenId.Model.OpenId.OpenIdClientParameter
 import Shared.OpenId.Service.OpenId.Client.Flow.OpenIdClientFlowService
 import Shared.OpenId.Service.OpenId.Client.Flow.OpenIdClientFlowUtil (parseIdToken)
+import Shared.UserEmailLink.Model.UserEmailLink.UserEmailLink
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.OpenId.OpenIdClientSessionDAO
 import Wizard.Database.DAO.User.UserDAO
@@ -32,10 +33,12 @@ import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.OpenId.OpenIdClientSession
 import Wizard.Model.User.User
 import Wizard.Model.User.UserRegistrationPendingServiceType
+import Wizard.Model.UserEmailLink.UserEmailLinkType
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.TenantHelper
 import Wizard.Service.User.UserService
 import Wizard.Service.User.UserUtil
+import Wizard.Service.UserEmailLink.UserEmailLinkService
 import Wizard.Service.UserToken.Login.LoginService
 import Wizard.Service.UserToken.Login.LoginValidation (validateIsUserActive)
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
@@ -126,7 +129,11 @@ loginUser providerUuid mClientUrl _mError mCode mState mIdToken mUserAgent mSess
               (Just email, Just firstName, Just lastName) -> do
                 consentRequired <- isConsentRequired Nothing
                 user <- createUserFromOpenIdLogin openIdClient externalId firstName lastName email mPicture mUserUuid (not consentRequired)
-                createLoginToken user mUserAgent mSessionState
+                if consentRequired
+                  then do
+                    userEmailLink <- createUserEmailLink user.uuid ConsentsRequiredUserEmailLinkType user.tenantUuid
+                    return $ ConsentsRequiredDTO {hash = userEmailLink.hash}
+                  else createLoginToken user mUserAgent mSessionState
               _ -> do
                 pending <- upsertPendingExternalRegistration OpenIdUserRegistrationPendingServiceType providerUuid externalId Nothing mEmail mFirstName mLastName mPicture Nothing
                 return $
