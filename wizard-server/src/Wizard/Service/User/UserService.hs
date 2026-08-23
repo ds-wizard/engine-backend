@@ -295,6 +295,12 @@ changeUserState hash active =
                 , emailVerifiedAt = Just now
                 , emailPending = Nothing
                 }
+            (ConsentsRequiredUserEmailLinkType, Just pendingEmail) ->
+              baseUser
+                { email = pendingEmail
+                , emailVerifiedAt = Just now
+                , emailPending = Nothing
+                }
             _ -> baseUser
     updateUserByUuid updatedUser
     void $ deleteUserEmailLinkByHash userEmailLink.hash
