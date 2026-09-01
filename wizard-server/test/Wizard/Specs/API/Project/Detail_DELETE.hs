@@ -16,14 +16,11 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Project.ProjectDAO
-import Wizard.Database.DAO.Project.ProjectMigrationDAO
 import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as DOC
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
-import Wizard.Database.Migration.Development.Project.Data.ProjectMigrations
 import Wizard.Database.Migration.Development.Project.Data.Projects
 import qualified Wizard.Database.Migration.Development.Project.ProjectMigration as PRJ
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Project.Project
 
@@ -38,7 +35,6 @@ detail_DELETE :: AppContext -> SpecWith ((), Application)
 detail_DELETE appContext =
   describe "DELETE /wizard-api/projects/{projectUuid}" $ do
     test_204 appContext
-    test_400 appContext
     test_401 appContext
     test_403 appContext
     test_404 appContext
@@ -85,38 +81,6 @@ create_test_204 title appContext project authHeader docCount =
       -- AND: Find result in DB and compare with expectation state
       assertCountInDB findProjects appContext 2
       assertCountInDB findDocuments appContext docCount
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_400 appContext =
-  it "HTTP 400 BAD REQUEST when package can't be deleted" $
-    -- GIVEN: Prepare request
-    do
-      let reqUrl = reqUrlT project4.uuid
-      let reqHeaders = reqHeadersT reqAuthHeader
-      -- AND: Prepare expectation
-      let expStatus = 400
-      let expHeaders = resCorsHeaders
-      let expDto = UserError _ERROR_SERVICE_PROJECT__PROJECT_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION
-      let expBody = encode expDto
-      -- AND: Prepare DB
-      runInContextIO U.runMigration appContext
-      runInContextIO TML.runMigration appContext
-      runInContextIO PRJ.runMigration appContext
-      runInContextIO (insertProject project4) appContext
-      runInContextIO (insertProject project4Upgraded) appContext
-      runInContextIO (insertProjectMigration projectMigration) appContext
-      runInContextIO DOC.runMigration appContext
-      -- WHEN: Call API
-      response <- request reqMethod reqUrl reqHeaders reqBody
-      -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
-      -- AND: Find result in DB and compare with expectation state
-      assertCountInDB findProjects appContext 5
-      assertCountInDB findDocuments appContext 3
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

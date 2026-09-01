@@ -17,7 +17,6 @@ toDTO project report locale =
     , locale = locale
     , isTemplate = project.isTemplate
     , permissions = project.permissions
-    , migrationUuid = project.migrationUuid
     , fileCount = project.fileCount
     , totalReport = report.totalReport
     , chapters = report.chapters

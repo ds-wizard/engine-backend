@@ -13,5 +13,6 @@ instance FromRow UserWithMembership where
     lastName <- field
     email <- field
     imageUrl <- field
+    affiliation <- field
     membershipType <- field
     return $ UserWithMembership {..}

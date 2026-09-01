@@ -15,6 +15,8 @@ toDTO dt formats =
   DocumentTemplateDTO
     { uuid = dt.uuid
     , name = dt.name
+    , organizationId = dt.organizationId
+    , templateId = dt.templateId
     , version = dt.version
     , phase = dt.phase
     , description = dt.description

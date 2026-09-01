@@ -12,6 +12,7 @@ instance FromRow UserSuggestion where
     lastName <- field
     gravatarHash <- field
     imageUrl <- field
+    affiliation <- field
     return $ UserSuggestion {..}
 
 fieldUserSuggestion :: RowParser UserSuggestion
@@ -21,6 +22,7 @@ fieldUserSuggestion = do
   lastName <- field
   gravatarHash <- field
   imageUrl <- field
+  affiliation <- field
   return UserSuggestion {..}
 
 fieldUserSuggestion' :: RowParser (Maybe UserSuggestion)
@@ -30,6 +32,7 @@ fieldUserSuggestion' = do
   mCreatedByLastName <- field
   mCreatedByGravatarHash <- field
   mCreatedByImageUrl <- field
-  case (mCreatedByUuid, mCreatedByFirstName, mCreatedByLastName, mCreatedByGravatarHash, mCreatedByImageUrl) of
-    (Just uuid, Just firstName, Just lastName, Just gravatarHash, imageUrl) -> return $ Just UserSuggestion {..}
+  mCreatedByAffiliation <- field
+  case (mCreatedByUuid, mCreatedByFirstName, mCreatedByLastName, mCreatedByGravatarHash, mCreatedByImageUrl, mCreatedByAffiliation) of
+    (Just uuid, Just firstName, Just lastName, Just gravatarHash, imageUrl, affiliation) -> return $ Just UserSuggestion {..}
     _ -> return Nothing

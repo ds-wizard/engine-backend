@@ -33,7 +33,6 @@ instance FromRow ProjectDetailSettings where
     selectedQuestionTagUuids <- fromPGArray <$> field
     language <- field
     formatUuid <- field
-    migrationUuid <- field
     permissions <- loadPermissions uuid
     knowledgeModelPackageUuid <- field
     knowledgeModelPackageName <- field
@@ -66,17 +65,21 @@ instance FromRow ProjectDetailSettings where
     let availableLocales = []
     mDocumentTemplateId <- field
     mDocumentTemplateName <- field
+    mDocumentTemplateOrganizationId <- field
+    mDocumentTemplateTemplateId <- field
     mDocumentTemplateVersion <- field
     mDocumentTemplatePhase <- field
     mDocumentTemplateDescription <- field
     mDocumentTemplateFormats <- fieldWith (optionalField fromJSONField)
     let documentTemplate =
-          case (mDocumentTemplateId, mDocumentTemplateName, mDocumentTemplateVersion, mDocumentTemplatePhase, mDocumentTemplateDescription, mDocumentTemplateFormats) of
-            (Just documentTemplateUuid, Just documentTemplateName, Just documentTemplateVersion, Just documentTemplatePhase, Just documentTemplateDescription, Just documentTemplateFormats) ->
+          case (mDocumentTemplateId, mDocumentTemplateName, mDocumentTemplateOrganizationId, mDocumentTemplateTemplateId, mDocumentTemplateVersion, mDocumentTemplatePhase, mDocumentTemplateDescription, mDocumentTemplateFormats) of
+            (Just documentTemplateUuid, Just documentTemplateName, Just documentTemplateOrganizationId, Just documentTemplateTemplateId, Just documentTemplateVersion, Just documentTemplatePhase, Just documentTemplateDescription, Just documentTemplateFormats) ->
               Just $
                 DocumentTemplateDTO
                   { uuid = documentTemplateUuid
                   , name = documentTemplateName
+                  , organizationId = documentTemplateOrganizationId
+                  , templateId = documentTemplateTemplateId
                   , version = documentTemplateVersion
                   , phase = documentTemplatePhase
                   , description = documentTemplateDescription
@@ -85,12 +88,14 @@ instance FromRow ProjectDetailSettings where
             _ -> Nothing
     let documentTemplatePhase = mDocumentTemplatePhase
     mDocumentTemplateMetamodelVersion <- field
-    let documentTemplateState =
+    let documentTemplateSupportState =
           case mDocumentTemplateMetamodelVersion of
             Just metamodelVersion ->
               if isDocumentTemplateUnsupported metamodelVersion
                 then Just UnsupportedMetamodelVersionDocumentTemplateState
                 else Just DefaultDocumentTemplateState
             _ -> Nothing
+    knowledgeModelState <- field
+    documentTemplateState <- field
     fileCount <- field
     return $ ProjectDetailSettings {..}

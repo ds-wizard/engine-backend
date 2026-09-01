@@ -56,4 +56,8 @@ instance FromRow PersistentCommandList where
                   case parts !! 4 of
                     "" -> Nothing
                     imageUrl -> Just imageUrl
+              , affiliation =
+                  case parts !! 5 of
+                    "" -> Nothing
+                    affiliation -> Just affiliation
               }

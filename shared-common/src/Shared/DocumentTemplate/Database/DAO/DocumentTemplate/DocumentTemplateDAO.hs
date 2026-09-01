@@ -77,8 +77,8 @@ findLatestDocumentTemplateByOrganizationIdAndTemplateId orgId templateId = do
           \  AND template_id = ? \
           \ORDER BY split_part(version, '.', 1)::int DESC, \
           \        split_part(version, '.', 2)::int DESC, \
-          \        split_part(version, '.', 3)::int DESC; \
-          \LIMIT 1:"
+          \        split_part(version, '.', 3)::int DESC \
+          \LIMIT 1"
   let params = [U.toString tenantUuid, orgId, templateId]
   logQuery sql params
   let action conn = query conn sql params

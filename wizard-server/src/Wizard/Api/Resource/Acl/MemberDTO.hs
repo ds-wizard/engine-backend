@@ -10,6 +10,7 @@ data MemberDTO
       , lastName :: String
       , gravatarHash :: String
       , imageUrl :: Maybe String
+      , affiliation :: Maybe String
       }
   | UserGroupMemberDTO
       { uuid :: U.UUID

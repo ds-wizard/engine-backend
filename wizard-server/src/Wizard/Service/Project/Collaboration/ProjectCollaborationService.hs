@@ -424,6 +424,7 @@ getMaybeCreatedBy myself =
       , lastName = lastName
       , gravatarHash = gravatarHash
       , imageUrl = imageUrl
+      , affiliation = affiliation
       } ->
         Just $
           UserSuggestion
@@ -432,5 +433,6 @@ getMaybeCreatedBy myself =
             , lastName = lastName
             , gravatarHash = gravatarHash
             , imageUrl = imageUrl
+            , affiliation = affiliation
             }
     u@AnonymousOnlineUserInfo {..} -> Nothing

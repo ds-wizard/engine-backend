@@ -29,11 +29,11 @@ sanitizerIntegrationSpec appContext =
                   $ km1WithQ4
           let projectEvents = fEventsList project1Uuid
           -- WHEN:
-          (Right result) <- runInContext (sanitizeProjectEvents project1Uuid oldKm newKm projectEvents) appContext
+          (Right result) <- runInContext (sanitizeProjectEvents oldKm newKm projectEvents) appContext
           -- THEN:
-          extractEventPath (result !! 15) `shouldBe` fst rQ1
-          extractEventPath (result !! 16) `shouldBe` fst rQ9
-          extractSetEventValue (result !! 16) `shouldBe` (snd rQ9WithNewType).value
+          extractEventPath (head result) `shouldBe` fst rQ1
+          extractEventPath (result !! 1) `shouldBe` fst rQ9
+          extractSetEventValue (result !! 1) `shouldBe` (snd rQ9WithNewType).value
 
 extractEventPath :: ProjectEventList -> String
 extractEventPath (ClearReplyEventList' event) = event.path

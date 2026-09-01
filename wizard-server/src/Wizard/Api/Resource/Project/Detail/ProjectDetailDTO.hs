@@ -14,7 +14,6 @@ data ProjectDetailDTO = ProjectDetailDTO
   , visibility :: ProjectVisibility
   , knowledgeModelPackage :: KnowledgeModelPackageSuggestion
   , isTemplate :: Bool
-  , migrationUuid :: Maybe U.UUID
   , permissions :: [ProjectPermDTO]
   , fileCount :: Int
   }

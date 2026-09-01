@@ -76,7 +76,8 @@ findProjectUserSuggestionsPage projectUuid perm mQuery pageable sort =
               \             u.first_name, \
               \             u.last_name, \
               \             u.email, \
-              \             u.image_url \
+              \             u.image_url, \
+              \             u.affiliation \
               \      FROM project_perm_user \
               \      JOIN user_entity u ON project_perm_user.user_uuid = u.uuid AND project_perm_user.tenant_uuid = u.tenant_uuid \
               \      WHERE project_perm_user.project_uuid = ? \
@@ -89,7 +90,8 @@ findProjectUserSuggestionsPage projectUuid perm mQuery pageable sort =
               \             u.first_name, \
               \             u.last_name, \
               \             u.email, \
-              \             u.image_url \
+              \             u.image_url, \
+              \             u.affiliation \
               \      FROM project_perm_group \
               \      LEFT JOIN user_group_membership ug_membership ON ug_membership.user_group_uuid = project_perm_group.user_group_uuid AND ug_membership.tenant_uuid = project_perm_group.tenant_uuid \
               \      LEFT JOIN user_entity u ON u.uuid = ug_membership.user_uuid AND u.tenant_uuid = project_perm_group.tenant_uuid \

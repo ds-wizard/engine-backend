@@ -28,7 +28,6 @@ instance ToSchema ProjectDetailReportDTO where
         , knowledgeModelPackage = germanyPackageSuggestion
         , locale = Nothing
         , isTemplate = project1.isTemplate
-        , migrationUuid = Nothing
         , permissions = [project1AlbertEditProjectPermDto]
         , fileCount = 0
         , totalReport = report1.totalReport

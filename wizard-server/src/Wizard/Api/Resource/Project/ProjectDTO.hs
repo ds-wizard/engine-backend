@@ -15,7 +15,8 @@ data ProjectDTO = ProjectDTO
   , description :: Maybe String
   , visibility :: ProjectVisibility
   , sharing :: ProjectSharing
-  , state :: ProjectState
+  , knowledgeModelState :: KnowledgeModelProjectState
+  , documentTemplateState :: Maybe DocumentTemplateProjectState
   , knowledgeModelPackage :: KnowledgeModelPackageSimple
   , permissions :: [ProjectPermDTO]
   , isTemplate :: Bool
@@ -31,7 +32,8 @@ instance Eq ProjectDTO where
       && a.description == b.description
       && a.visibility == b.visibility
       && a.sharing == b.sharing
-      && a.state == b.state
+      && a.knowledgeModelState == b.knowledgeModelState
+      && a.documentTemplateState == b.documentTemplateState
       && a.knowledgeModelPackage == b.knowledgeModelPackage
       && a.permissions == b.permissions
       && a.isTemplate == b.isTemplate

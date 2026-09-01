@@ -28,6 +28,7 @@ import Wizard.Database.Migration.Development.Project.Data.Projects
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Model.Project.Detail.ProjectDetailSettings
 import Wizard.Model.Project.Project
+import Wizard.Model.Project.ProjectState
 import qualified Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper as PackageMapper
 
 instance ToSchema ProjectDetailSettings where
@@ -41,16 +42,17 @@ instance ToSchema ProjectDetailSettings where
         , sharing = project1.sharing
         , selectedQuestionTagUuids = project1.selectedQuestionTagUuids
         , isTemplate = project1.isTemplate
-        , migrationUuid = Nothing
         , permissions = [project1AlbertEditProjectPermDto]
         , projectTags = project1.projectTags
         , knowledgeModelPackageUuid = netherlandsKmPackageV2.uuid
         , knowledgeModelPackage = PackageMapper.toSimpleDTO netherlandsKmPackageV2
         , knowledgeModelTags = [tagDataScience]
+        , knowledgeModelState = UpToDateKnowledgeModelProjectState
         , language = Nothing
         , availableLocales = []
         , documentTemplate = Just $ DocumentTemplateMapper.toDTO wizardDocumentTemplate wizardDocumentTemplateFormats
-        , documentTemplateState = Just DefaultDocumentTemplateState
+        , documentTemplateState = Just UpToDateDocumentTemplateProjectState
+        , documentTemplateSupportState = Just DefaultDocumentTemplateState
         , documentTemplatePhase = Just DraftDocumentTemplatePhase
         , formatUuid = Just . u' $ "ae3b9e68-e09e-4ad7-b476-67ab5626e873"
         , fileCount = 0

@@ -15,7 +15,6 @@ data ProjectDetailPreview = ProjectDetailPreview
   , sharing :: ProjectSharing
   , knowledgeModelPackage :: KnowledgeModelPackageSuggestion
   , isTemplate :: Bool
-  , migrationUuid :: Maybe U.UUID
   , permissions :: [ProjectPermDTO]
   , documentTemplateUuid :: Maybe U.UUID
   , format :: Maybe DocumentTemplateFormatSimple

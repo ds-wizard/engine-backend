@@ -20,9 +20,6 @@ _ERROR_VALIDATION__DOC_TML_FILE_OR_ASSET_UNIQUENESS =
 _ERROR_VALIDATION__KM_MIGRATION_UNIQUENESS =
   LocaleRecord "error.validation.km_migration_uniqueness" "Migration of Knowledge Model already exists" []
 
-_ERROR_VALIDATION__PROJECT_MIGRATION_UNIQUENESS =
-  LocaleRecord "error.validation.project_migration_uniqueness" "Project Migration already exists" []
-
 _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS email =
   LocaleRecord "error.validation.user_email_uniqueness" "User (email: '%s') already exists" [email]
 
@@ -150,12 +147,6 @@ _ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG pkgId =
     [pkgId]
 
 -- Project
-_ERROR_SERVICE_PROJECT__PROJECT_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION =
-  LocaleRecord
-    "error.service.project.project_cant_be_deleted_because_it_is_used_in_migration"
-    "Project can't be deleted because it's used in some project migration"
-    []
-
 _ERROR_SERVICE_PROJECT_COLLABORATION__FORCE_DISCONNECT projectUuid =
   LocaleRecord
     "error.service.project.collaboration.force_disconnect"

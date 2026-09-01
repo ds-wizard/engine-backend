@@ -4,6 +4,8 @@ module Wizard.Specs.API.Project.Migration.List_POST (
 
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
+import Data.Either (isRight)
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -13,25 +15,25 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.Project.Detail.ProjectDetailQuestionnaireDTO
-import Wizard.Api.Resource.Project.Migration.ProjectMigrationDTO
-import Wizard.Api.Resource.Project.Migration.ProjectMigrationJM ()
+import Wizard.Api.Resource.Project.Detail.ProjectDetailQuestionnaireJM ()
+import Wizard.Api.Resource.Project.Migration.ProjectMigrationCreateJM ()
 import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Database.DAO.Project.ProjectEventDAO
-import Wizard.Database.DAO.Project.ProjectMigrationDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
-import Wizard.Database.Migration.Development.Project.Data.ProjectMigrations
 import Wizard.Database.Migration.Development.Project.Data.Projects
 import qualified Wizard.Database.Migration.Development.Project.ProjectMigration as PRJ
-import qualified Wizard.Database.Migration.Development.Project.ProjectMigrationMigration as PRJ_MIG
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Project.Migration.ProjectMigration
+import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Model.Project.Project
+import Wizard.Model.Project.ProjectContent
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
-import Wizard.Specs.API.Project.Migration.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
@@ -40,7 +42,7 @@ import Wizard.Specs.Common
 list_POST :: AppContext -> SpecWith ((), Application)
 list_POST appContext =
   describe "POST /wizard-api/projects/{projectUuid}/migrations" $ do
-    test_201 appContext
+    test_200 appContext
     test_400 appContext
     test_401 appContext
     test_403 appContext
@@ -62,71 +64,47 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_201 appContext = do
-  create_test_201
-    "HTTP 201 CREATED (Owner, Private)"
-    appContext
-    project4
-    project4Events
-    project4Upgraded
-    project4UpgradedEvents
-    projectMigration
-    projectMigrationDto
-    reqNonAdminAuthHeader
-  create_test_201
-    "HTTP 201 CREATED (Non-Owner, VisibleView)"
-    appContext
-    project4VisibleView
-    project4VisibleViewEvents
-    project4VisibleViewUpgraded
-    project4VisibleViewUpgradedEvents
-    projectMigration
-    projectMigrationVisibleViewDto
-    reqNonAdminAuthHeader
-  create_test_201
-    "HTTP 201 CREATED (Non-Owner, Public)"
-    appContext
-    project4VisibleEdit
-    project4VisibleEditEvents
-    project4VisibleEditUpgraded
-    project4VisibleEditUpgradedEvents
-    projectMigration
-    projectMigrationVisibleEditDto
-    reqNonAdminAuthHeader
+test_200 appContext = do
+  create_test_200 "HTTP 200 OK (Owner, Private)" appContext project4 project4Events
+  create_test_200 "HTTP 200 OK (Non-Owner, VisibleView)" appContext project4VisibleView project4VisibleViewEvents
+  create_test_200 "HTTP 200 OK (Non-Owner, VisibleEdit)" appContext project4VisibleEdit project4VisibleEditEvents
 
-create_test_201 title appContext oldProject oldProjectEvents newProject newProjectEvents state stateDto authHeader =
+create_test_200 title appContext project projectEvents =
   it title $
     -- GIVEN: Prepare request
     do
-      let reqUrl = reqUrlT oldProject.uuid
+      let reqUrl = reqUrlT project.uuid
       let reqHeaders = reqHeadersT reqAuthHeader
       -- AND: Prepare expectation
-      let expStatus = 201
+      let expStatus = 200
       let expHeaders = resCorsHeadersPlain
-      let expDto = stateDto {resolvedQuestionUuids = []} :: ProjectMigrationDTO
-      let expBody = encode expDto
       -- AND: Prepare database
       runInContextIO TML.runMigration appContext
-      runInContextIO (insertProject oldProject) appContext
-      runInContextIO (insertProjectEvents oldProjectEvents) appContext
-      runInContextIO (insertProject newProject) appContext
-      runInContextIO (insertProjectEvents newProjectEvents) appContext
-      runInContextIO (insertProject differentProject) appContext
-      runInContextIO (insertProjectEvents differentProjectEvents) appContext
-      runInContextIO PRJ_MIG.runMigration appContext
+      runInContextIO (insertProject project) appContext
+      runInContextIO (insertProjectEvents projectEvents) appContext
+      -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, ProjectMigrationDTO)
+      let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, ProjectDetailQuestionnaireDTO)
       assertResStatus status expStatus
       assertResHeaders headers expHeaders
-      compareProjectMigratorDtos resBody expDto
+      liftIO $ resBody.uuid `shouldBe` project.uuid
+      liftIO $ resBody.knowledgeModelPackage.uuid `shouldBe` netherlandsKmPackageV2.uuid
+      liftIO $ resBody.knowledgeModel `shouldBe` km1NetherlandsV2
+      liftIO $ resBody.phaseUuid `shouldBe` project4Ctn.phaseUuid
+      liftIO $ resBody.replies `shouldBe` M.empty
       -- AND: Find a result in DB
-      let entityInDB =
-            state
-              { newProjectUuid = resBody.newProject.uuid
-              , resolvedQuestionUuids = []
-              }
-      assertExistenceOfMigrationStateInDB appContext entityInDB
+      assertCountInDB findProjects appContext 1
+      eProjectFromDb <- runInContextIO (findProjectByUuid project.uuid) appContext
+      liftIO $ isRight eProjectFromDb `shouldBe` True
+      let (Right projectFromDb) = eProjectFromDb
+      liftIO $ projectFromDb.knowledgeModelPackageUuid `shouldBe` netherlandsKmPackageV2.uuid
+      liftIO $ projectFromDb.selectedQuestionTagUuids `shouldBe` []
+      liftIO $ projectFromDb.squashed `shouldBe` False
+      eProjectEventsFromDb <- runInContextIO (findProjectEventsByProjectUuid project.uuid) appContext
+      liftIO $ isRight eProjectEventsFromDb `shouldBe` True
+      let (Right projectEventsFromDb) = eProjectEventsFromDb
+      liftIO $ projectEventsFromDb `shouldBe` projectEvents
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -166,8 +144,6 @@ create_test_403 title appContext project reason =
       let responseMatcher =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
-      -- AND: Find result in DB and compare with expectation state
-      assertCountInDB findProjectMigrations appContext 0
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

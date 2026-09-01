@@ -6,10 +6,10 @@ import Servant
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
+import Wizard.Api.Resource.Project.Detail.ProjectDetailQuestionnaireDTO
+import Wizard.Api.Resource.Project.Detail.ProjectDetailQuestionnaireJM ()
 import Wizard.Api.Resource.Project.Migration.ProjectMigrationCreateDTO
 import Wizard.Api.Resource.Project.Migration.ProjectMigrationCreateJM ()
-import Wizard.Api.Resource.Project.Migration.ProjectMigrationDTO
-import Wizard.Api.Resource.Project.Migration.ProjectMigrationJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Project.Migration.ProjectMigrationService
 
@@ -20,14 +20,14 @@ type List_POST =
     :> "projects"
     :> Capture "uuid" U.UUID
     :> "migrations"
-    :> Verb 'POST 201 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] ProjectMigrationDTO)
+    :> Verb 'POST 200 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] ProjectDetailQuestionnaireDTO)
 
 list_POST
   :: Maybe String
   -> Maybe String
   -> ProjectMigrationCreateDTO
   -> U.UUID
-  -> BaseContextM (Headers '[Header "x-trace-uuid" String] ProjectMigrationDTO)
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] ProjectDetailQuestionnaireDTO)
 list_POST mTokenHeader mServerUrl reqDto uuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService Transactional $ addTraceUuidHeader =<< createProjectMigration uuid reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< migrateProject uuid reqDto

@@ -195,7 +195,6 @@ create_test_200 title appContext project projectEvents projectContent kmPackage 
               , replies = fReplies
               , labels = projectContent.labels
               , phaseUuid = projectContent.phaseUuid
-              , migrationUuid = Nothing
               , permissions = permissions
               , files = []
               , unresolvedCommentCounts = unresolvedCommentCounts

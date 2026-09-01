@@ -4,6 +4,10 @@ import Data.Aeson
 
 import Wizard.Model.Project.ProjectState
 
-instance FromJSON ProjectState
+instance FromJSON KnowledgeModelProjectState
 
-instance ToJSON ProjectState
+instance ToJSON KnowledgeModelProjectState
+
+instance FromJSON DocumentTemplateProjectState
+
+instance ToJSON DocumentTemplateProjectState

@@ -29,7 +29,8 @@ instance FromRow ProjectList where
     isTemplate <- field
     createdAt <- field
     updatedAt <- field
-    state <- field
+    knowledgeModelState <- field
+    documentTemplateState <- field
     packageUuid <- field
     packageName <- field
     packageVersion <- field
@@ -63,6 +64,10 @@ instance FromRow ProjectList where
                         case parts !! 6 of
                           "" -> Nothing
                           imageUrl -> Just imageUrl
+                    , affiliation =
+                        case parts !! 7 of
+                          "" -> Nothing
+                          affiliation -> Just affiliation
                     }
               }
       parseGroupPermission :: U.UUID -> String -> ProjectPermDTO

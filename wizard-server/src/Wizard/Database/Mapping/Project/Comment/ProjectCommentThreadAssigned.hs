@@ -23,6 +23,7 @@ instance FromRow ProjectCommentThreadAssigned where
     mCreatedByLastName <- fieldWith (optionalField fromField)
     mCreatedByEmail <- fieldWith (optionalField fromField)
     mCreatedByImageUrl <- fieldWith (optionalField fromField)
+    mCreatedByAffiliation <- fieldWith (optionalField fromField)
     let createdBy =
           case (mCreatedByUuid, mCreatedByFirstName, mCreatedByLastName, mCreatedByEmail) of
             (Just createdByUuid, Just createdByFirstName, Just createdByLastName, Just createdByEmail) ->
@@ -33,6 +34,7 @@ instance FromRow ProjectCommentThreadAssigned where
                   , lastName = createdByLastName
                   , imageUrl = mCreatedByImageUrl
                   , gravatarHash = createGravatarHash createdByEmail
+                  , affiliation = mCreatedByAffiliation
                   }
             _ -> Nothing
     return ProjectCommentThreadAssigned {..}

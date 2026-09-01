@@ -86,9 +86,7 @@ import Wizard.Api.Resource.Project.Detail.ProjectDetailSM ()
 import Wizard.Api.Resource.Project.Detail.ProjectDetailSettingsSM ()
 import Wizard.Api.Resource.Project.Detail.ProjectDetailWsSM ()
 import Wizard.Api.Resource.Project.Event.ProjectEventListSM ()
-import Wizard.Api.Resource.Project.Migration.ProjectMigrationChangeSM ()
 import Wizard.Api.Resource.Project.Migration.ProjectMigrationCreateSM ()
-import Wizard.Api.Resource.Project.Migration.ProjectMigrationSM ()
 import Wizard.Api.Resource.Project.ProjectContentChangeSM ()
 import Wizard.Api.Resource.Project.ProjectContentSM ()
 import Wizard.Api.Resource.Project.ProjectCreateFromTemplateSM ()
@@ -158,7 +156,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "4.33.4"
+              , _infoVersion = "4.34.0"
               , _infoLicense =
                   Just $
                     License

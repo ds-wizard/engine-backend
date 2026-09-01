@@ -122,6 +122,16 @@ commonResponseMapperSpec =
           let result = convertToArray response
           -- THEN:
           result `shouldBe` expectation
+      it "null as empty array" $
+        -- GIVEN: Response
+        do
+          let response = Null
+          -- AND: Expectations
+          let expectation = Right []
+          -- WHEN:
+          let result = convertToArray response
+          -- THEN:
+          result `shouldBe` expectation
       it "bad type" $
         -- GIVEN: Response
         do

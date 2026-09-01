@@ -11,6 +11,7 @@ import Wizard.Api.Resource.Project.Acl.ProjectPermDTO
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Model.KnowledgeModel.Locale.KnowledgeModelLocaleList
 import Wizard.Model.Project.Project
+import Wizard.Model.Project.ProjectState
 
 data ProjectDetailSettings = ProjectDetailSettings
   { uuid :: U.UUID
@@ -19,16 +20,17 @@ data ProjectDetailSettings = ProjectDetailSettings
   , visibility :: ProjectVisibility
   , sharing :: ProjectSharing
   , isTemplate :: Bool
-  , migrationUuid :: Maybe U.UUID
   , permissions :: [ProjectPermDTO]
   , projectTags :: [String]
   , knowledgeModelPackageUuid :: U.UUID
   , knowledgeModelPackage :: KnowledgeModelPackageSimpleDTO
   , knowledgeModelTags :: [Tag]
+  , knowledgeModelState :: KnowledgeModelProjectState
   , language :: Maybe String
   , availableLocales :: [KnowledgeModelLocaleList]
   , documentTemplate :: Maybe DocumentTemplateDTO
-  , documentTemplateState :: Maybe DocumentTemplateState
+  , documentTemplateState :: Maybe DocumentTemplateProjectState
+  , documentTemplateSupportState :: Maybe DocumentTemplateState
   , documentTemplatePhase :: Maybe DocumentTemplatePhase
   , formatUuid :: Maybe U.UUID
   , selectedQuestionTagUuids :: [U.UUID]

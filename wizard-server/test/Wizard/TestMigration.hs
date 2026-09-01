@@ -29,7 +29,6 @@ import Wizard.Database.DAO.Project.ProjectCommentThreadDAO
 import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Database.DAO.Project.ProjectEventDAO
 import Wizard.Database.DAO.Project.ProjectFileDAO
-import Wizard.Database.DAO.Project.ProjectMigrationDAO
 import Wizard.Database.DAO.Project.ProjectPermDAO
 import Wizard.Database.DAO.Project.ProjectVersionDAO
 import Wizard.Database.DAO.Registry.RegistryKnowledgeModelPackageDAO
@@ -65,7 +64,6 @@ import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigrat
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PersistentCommand
 import Wizard.Database.Migration.Development.Plugin.Data.Plugins
 import qualified Wizard.Database.Migration.Development.Plugin.PluginSchemaMigration as Plugin
-import qualified Wizard.Database.Migration.Development.Project.ProjectMigrationSchemaMigration as ProjectMigration
 import qualified Wizard.Database.Migration.Development.Project.ProjectSchemaMigration as Project
 import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as Registry
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as Submission
@@ -127,7 +125,6 @@ buildSchema appContext = do
   runInContext KnowledgeModelCache.dropTables appContext
   runInContext KnowledgeModelEditor.dropTables appContext
   runInContext Document.dropTables appContext
-  runInContext ProjectMigration.dropTables appContext
   runInContext Project.dropTables appContext
   runInContext KnowledgeModelSecret.dropTables appContext
   runInContext KnowledgeModelLocale.dropTables appContext
@@ -172,7 +169,6 @@ buildSchema appContext = do
   runInContext Project.createTables appContext
   runInContext DocumentTemplate.createDraftDataTable appContext
   runInContext Document.createTables appContext
-  runInContext ProjectMigration.createTables appContext
   runInContext KnowledgeModelMigration.createTables appContext
   runInContext Submission.createTables appContext
   runInContext PersistentCommand.createTables appContext
@@ -219,7 +215,6 @@ resetDB appContext = do
   runInContext deleteTenantConfigAuthentications appContext
   runInContext deleteTenantConfigOrganizations appContext
   runInContext deleteKnowledgeModelMigrations appContext
-  runInContext deleteProjectMigrations appContext
   runInContext deleteFeedbacks appContext
   runInContext deleteUserEmailLinks appContext
   runInContext deleteKnowledgeModelEditors appContext

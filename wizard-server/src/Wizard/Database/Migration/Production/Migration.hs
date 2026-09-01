@@ -70,6 +70,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0065_idToUuid.Mi
 import qualified Wizard.Database.Migration.Production.Migration_0066_tcKnowledgeModel.Migration as M_0066
 import qualified Wizard.Database.Migration.Production.Migration_0067_openIdClient.Migration as M_0067
 import qualified Wizard.Database.Migration.Production.Migration_0068_roles.Migration as M_0068
+import qualified Wizard.Database.Migration.Production.Migration_0069_setPhaseEventFix.Migration as M_0069
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
@@ -141,4 +142,5 @@ migrationDefinitions =
   , M_0066.definition
   , M_0067.definition
   , M_0068.definition
+  , M_0069.definition
   ]
